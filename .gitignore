@@ -1,0 +1,11 @@
+# Ignore compiled Python files
+__pycache__/
+*.py[cod]
+
+# Ignore local virtualenv
+.env*
+env/
+venv/
+
+# Ignore Alembic SQLite dev DB (if any)
+*.sqlite3
