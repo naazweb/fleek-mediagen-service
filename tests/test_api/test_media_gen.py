@@ -10,7 +10,7 @@ def test_generate_media_success(client):
     }
 
     # Send POST request to /generate
-    response = client.post("/api/generate", json=payload)
+    response = client.post("/generate", json=payload)
 
     assert response.status_code == 200
 
@@ -31,7 +31,7 @@ def test_generate_media_missing_prompt(client):
         "model": "realistic-v1",
     }
 
-    response = client.post("/api/generate", json=payload)
+    response = client.post("/generate", json=payload)
 
     # Assert status code is 422 Unprocessable Entity (validation failure)
     assert response.status_code == 422
@@ -48,7 +48,7 @@ def test_generate_media_invalid_width(client):
         "model": "realistic-v1",
     }
 
-    response = client.post("/api/generate", json=payload)
+    response = client.post("/generate", json=payload)
 
     # Assert status code is 422
     assert response.status_code == 422
