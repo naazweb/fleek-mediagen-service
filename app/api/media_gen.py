@@ -11,6 +11,15 @@ router = APIRouter()
 
 @router.post("/generate", response_model=MediaGenerationResponse)
 async def generate_media(request: MediaGenerationRequest):
+    """
+    Generate media content using AI models.
+    
+    Args:
+        request: Media generation parameters including prompt, model, and dimensions
+        
+    Returns:
+        MediaGenerationResponse: Job ID and confirmation message
+    """
     job_id = str(uuid4())
     job = await MediaGenerationJob.create(
         id=job_id,
@@ -36,6 +45,18 @@ async def generate_media(request: MediaGenerationRequest):
 
 @router.get("/status/{job_id}", response_model=MediaJobResponse)
 async def get_job_status(job_id: UUID):
+    """
+    Get the status of a media generation job.
+    
+    Args:
+        job_id: UUID of the media generation job
+        
+    Returns:
+        MediaJobResponse: Job details including status, output URL, and timestamps
+        
+    Raises:
+        HTTPException: 404 if job not found
+    """
     job = await MediaGenerationJob.filter(id=job_id).first()
     if not job:
         logger.warning(f"Job {job_id} not found")
