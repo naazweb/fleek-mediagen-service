@@ -1,10 +1,12 @@
-from fastapi import FastAPI
-
+from app.core.app_factory import create_app
 from app.core.celery_worker import celery_app
 
-app = FastAPI()
+app = create_app()
 celery_app = celery_app
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello, FastAPI"}
+@app.get("/health-check")
+async def health_check():
+    try:
+        return {"status": "healthy", "service": "MediaGen Service"}
+    except Exception as e:
+        return {"status": "unhealthy", "error": str(e)}
