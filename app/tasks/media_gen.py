@@ -88,7 +88,7 @@ async def _async_generate_media(task, job_id: str, prompt: str, model_name: str,
                 image_data = response.content
         
         # Upload to Cloudflare R2
-        key = f"generated/{job_id}.jpg"
+        key = f"{job_id}.jpg"
         public_url = r2_client.upload_file(image_data, key, "image/jpeg")
         
         # Update job with success
