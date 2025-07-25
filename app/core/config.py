@@ -19,6 +19,10 @@ class Settings(BaseSettings):
     # Database Configuration
     DATABASE_URL: str
     
+    # Celery Configuration
+    CELERY_BROKER_URL: str 
+    CELERY_RESULT_BACKEND: str 
+    
     @property
     def tortoise_config(self):
         return {
@@ -32,5 +36,7 @@ class Settings(BaseSettings):
                 }
             }
         }
+
+    
 
 settings = Settings(_env_file=".env")
