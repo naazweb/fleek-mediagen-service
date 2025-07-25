@@ -1,4 +1,8 @@
 from pydantic import BaseModel
+from datetime import datetime
+from typing import Optional
+from uuid import UUID
+from app.core.consts import JobStatus
 
 
 class MediaGenerationRequest(BaseModel):
@@ -11,3 +15,13 @@ class MediaGenerationRequest(BaseModel):
 class MediaGenerationResponse(BaseModel):
     job_id: str
     message: str
+
+
+class MediaJobResponse(BaseModel):
+    id: UUID
+    status: JobStatus
+    retries: int
+    error_message: Optional[str]
+    output_url: Optional[str]
+    created_at: datetime
+    updated_at: datetime

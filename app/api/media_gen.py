@@ -1,8 +1,8 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from uuid import uuid4, UUID
 
 from app.models.media_gen import MediaGenerationJob
-from app.schemas.media_gen import MediaGenerationRequest, MediaGenerationResponse
+from app.schemas.media_gen import MediaGenerationRequest, MediaGenerationResponse, MediaJobResponse
 from app.tasks.media_gen import generate_media_task
 
 router = APIRouter()
@@ -31,3 +31,19 @@ async def generate_media(request: MediaGenerationRequest):
         message="Job queued successfully"
     )
 
+
+@router.get("/status/{job_id}", response_model=MediaJobResponse)
+async def get_job_status(job_id: UUID):
+    job = await MediaGenerationJob.filter(id=job_id).first()
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    
+    return MediaJobResponse(
+        id=job.id,
+        status=job.status,
+        retries=job.retries,
+        error_message=job.error_message,
+        output_url=job.output_url,
+        created_at=job.created_at,
+        updated_at=job.updated_at
+    )

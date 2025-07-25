@@ -1,4 +1,5 @@
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, AsyncMock
+from uuid import uuid4
 
 def test_generate_media_success(client):
     """
@@ -70,18 +71,25 @@ def test_get_job_status_found(client):
     """
     Test case for getting job status when job exists
     """
-    with patch('app.api.media_gen.MediaGenerationJob.get') as mock_get:
+    with patch('app.api.media_gen.MediaGenerationJob.filter') as mock_filter:
+        job_id = uuid4()
         mock_job = MagicMock()
-        mock_job.id = "test-job-id"
-        mock_job.status = "completed"
+        mock_job.id = job_id
+        mock_job.prompt = "Test prompt"
+        mock_job.model = "realistic-v1"
+        mock_job.width = 768
+        mock_job.height = 512
+        mock_job.status = "done"
+        mock_job.retries = 0
+        mock_job.error_message = None
         mock_job.output_url = "http://example.com/image.jpg"
-        mock_get.return_value = mock_job
+        mock_filter.return_value.first = AsyncMock(return_value=mock_job)
         
-        response = client.get("/status/test-job-id")
+        response = client.get(f"/status/{job_id}")
         
         assert response.status_code == 200
         data = response.json()
-        assert data["status"] == "completed"
+        assert data["status"] == "done"
         assert data["output_url"] == "http://example.com/image.jpg"
 
 
@@ -89,9 +97,10 @@ def test_get_job_status_not_found(client):
     """
     Test case for getting job status when job doesn't exist
     """
-    with patch('app.api.media_gen.MediaGenerationJob.get') as mock_get:
-        mock_get.side_effect = Exception("Job not found")
+    with patch('app.api.media_gen.MediaGenerationJob.filter') as mock_filter:
+        job_id = uuid4()
+        mock_filter.return_value.first = AsyncMock(return_value=None)
         
-        response = client.get("/status/nonexistent-job-id")
+        response = client.get(f"/status/{job_id}")
         
         assert response.status_code == 404
