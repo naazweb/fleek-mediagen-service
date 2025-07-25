@@ -23,6 +23,14 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL: str 
     CELERY_RESULT_BACKEND: str 
     
+    # Cloudflare Configuration
+    CLOUDFLARE_ACCOUNT_ID: str
+    CLOUDFLARE_API_TOKEN: str
+    CLOUDFLARE_R2_BUCKET: str
+    CLOUDFLARE_R2_ACCESS_KEY: str
+    CLOUDFLARE_R2_SECRET_KEY: str
+    CLOUDFLARE_R2_ENDPOINT: str 
+    
     @property
     def tortoise_config(self):
         return {
