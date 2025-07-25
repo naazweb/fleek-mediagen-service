@@ -32,7 +32,8 @@ class Settings(BaseSettings):
     CLOUDFLARE_R2_ENDPOINT: str
     
     # Replicate Configuration
-    REPLICATE_API_TOKEN: str 
+    REPLICATE_API_TOKEN: str
+    MOCK_REPLICATE: bool = False 
     
     @property
     def tortoise_config(self):
