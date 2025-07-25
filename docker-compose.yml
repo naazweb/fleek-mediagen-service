@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: media_gen_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fleek_admin
+      POSTGRES_PASSWORD: fleek_password
+      POSTGRES_DB: media_gen
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    container_name: media_gen_redis
+
+  app:
+    build:
+      context: .
+    container_name: media_gen_app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+
+volumes:
+  postgres_data:
