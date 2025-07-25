@@ -35,5 +35,18 @@ services:
     volumes:
       - .:/app
 
+  worker:
+    build:
+      context: .
+    container_name: media_gen_worker
+    command: celery -A app.main.celery_app worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - .env
+
 volumes:
   postgres_data:
