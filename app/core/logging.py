@@ -14,14 +14,4 @@ def setup_logging():
         colorize=True
     )
     
-    # File logging
-    logger.add(
-        "logs/app.log",
-        rotation="10 MB",
-        retention="7 days",
-        level="INFO",
-        format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}",
-        compression="zip"
-    )
-    
     return logger
