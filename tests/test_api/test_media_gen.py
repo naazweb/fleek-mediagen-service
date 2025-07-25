@@ -64,3 +64,34 @@ def test_generate_media_invalid_width(client):
 
     # Assert status code is 422
     assert response.status_code == 422
+
+
+def test_get_job_status_found(client):
+    """
+    Test case for getting job status when job exists
+    """
+    with patch('app.api.media_gen.MediaGenerationJob.get') as mock_get:
+        mock_job = MagicMock()
+        mock_job.id = "test-job-id"
+        mock_job.status = "completed"
+        mock_job.output_url = "http://example.com/image.jpg"
+        mock_get.return_value = mock_job
+        
+        response = client.get("/status/test-job-id")
+        
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] == "completed"
+        assert data["output_url"] == "http://example.com/image.jpg"
+
+
+def test_get_job_status_not_found(client):
+    """
+    Test case for getting job status when job doesn't exist
+    """
+    with patch('app.api.media_gen.MediaGenerationJob.get') as mock_get:
+        mock_get.side_effect = Exception("Job not found")
+        
+        response = client.get("/status/nonexistent-job-id")
+        
+        assert response.status_code == 404
