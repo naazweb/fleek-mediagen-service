@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from uuid import uuid4, UUID
+from loguru import logger
 
 from app.models.media_gen import MediaGenerationJob
 from app.schemas.media_gen import MediaGenerationRequest, MediaGenerationResponse, MediaJobResponse
@@ -26,6 +27,7 @@ async def generate_media(request: MediaGenerationRequest):
         width=job.width,
         height=job.height,
     )
+    logger.info(f"Job {job_id} queued successfully")
     return MediaGenerationResponse(
         job_id=job_id,
         message="Job queued successfully"
@@ -36,6 +38,7 @@ async def generate_media(request: MediaGenerationRequest):
 async def get_job_status(job_id: UUID):
     job = await MediaGenerationJob.filter(id=job_id).first()
     if not job:
+        logger.warning(f"Job {job_id} not found")
         raise HTTPException(status_code=404, detail="Job not found")
     
     return MediaJobResponse(

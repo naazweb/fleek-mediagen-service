@@ -1,5 +1,6 @@
 import asyncio
 import httpx
+from loguru import logger
 from app.core.celery_worker import celery_app
 from app.models.media_gen import MediaGenerationJob
 from app.services.replicate import replicate_service
@@ -69,11 +70,13 @@ async def _async_generate_media(task, job_id: str, prompt: str, model_name: str,
         job = await MediaGenerationJob.get(id=job_id)
         job.status = JobStatus.PROCESSING.value
         await job.save()
+        logger.info(f"Job {job_id} status updated to PROCESSING")
         
         # Generate image using Replicate
         image_url = await replicate_service.generate_image(prompt, model_name, width, height)
         if not image_url:
             raise Exception("Failed to generate image")
+        logger.info(f"Image generated successfully for job {job_id}")
         
         # Download image
         if image_url.startswith('data:image/'):
@@ -90,19 +93,23 @@ async def _async_generate_media(task, job_id: str, prompt: str, model_name: str,
         # Upload to Cloudflare R2
         key = f"{job_id}.jpg"
         public_url = r2_client.upload_file(image_data, key, "image/jpeg")
+        logger.info(f"Image uploaded successfully for job {job_id}: {public_url}")
         
         # Update job with success
         job.status = JobStatus.DONE.value
         job.output_url = public_url
         await job.save()
+        logger.info(f"Job {job_id} completed successfully")
         
     except Exception as e:
         # Update job with error
+        logger.error(f"Job {job_id} failed: {str(e)}")
         job = await MediaGenerationJob.get(id=job_id)
         job.status = JobStatus.FAILED.value
         job.error_message = str(e)
         job.retries = task.request.retries
         await job.save()
+        logger.warning(f"Job {job_id} retry count: {task.request.retries}")
         
         # Re-raise for Celery retry logic
         raise e

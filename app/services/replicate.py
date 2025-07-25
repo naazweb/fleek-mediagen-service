@@ -1,6 +1,7 @@
 import replicate
 from PIL import Image, ImageDraw
 import io
+from loguru import logger
 from app.core.config import settings
 
 class ReplicateService:
@@ -10,8 +11,10 @@ class ReplicateService:
     async def generate_image(self, prompt: str, model: str = "realistic-v1", width: int = 768, height: int = 512) -> str:
         """Generate image using Replicate API or mock PIL image"""
         if settings.MOCK_REPLICATE:
+            logger.info(f"Using mock image generation for prompt: {prompt[:50]}...")
             return self._generate_mock_image(prompt, width, height)
         
+        logger.info(f"Calling Replicate API for prompt: {prompt[:50]}...")
         output = await replicate.async_run(
             "black-forest-labs/flux-schnell",
             input={

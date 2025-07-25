@@ -1,0 +1,8 @@
+2025-07-25 16:30:12 | INFO     | app.core.app_factory:create_app:17 - Starting Media Generation API
+2025-07-25 16:30:12 | INFO     | app.core.app_factory:create_app:17 - Starting Media Generation API
+2025-07-25 16:30:13 | INFO     | app.api.media_gen:generate_media:30 - Job ebee0a6f-d179-49bb-8b9e-8e33fde9e6ba queued successfully
+2025-07-25 16:30:14 | INFO     | app.tasks.media_gen:_async_generate_media:73 - Job ebee0a6f-d179-49bb-8b9e-8e33fde9e6ba status updated to PROCESSING
+2025-07-25 16:30:14 | INFO     | app.services.replicate:generate_image:14 - Using mock image generation for prompt: Panda in rain...
+2025-07-25 16:30:14 | INFO     | app.tasks.media_gen:_async_generate_media:79 - Image generated successfully for job ebee0a6f-d179-49bb-8b9e-8e33fde9e6ba
+2025-07-25 16:30:15 | INFO     | app.tasks.media_gen:_async_generate_media:96 - Image uploaded successfully for job ebee0a6f-d179-49bb-8b9e-8e33fde9e6ba: https://pub-657a94d1c8ba4dfb86a0a5377aaedfef.r2.dev/ebee0a6f-d179-49bb-8b9e-8e33fde9e6ba.jpg
+2025-07-25 16:30:15 | INFO     | app.tasks.media_gen:_async_generate_media:102 - Job ebee0a6f-d179-49bb-8b9e-8e33fde9e6ba completed successfully
