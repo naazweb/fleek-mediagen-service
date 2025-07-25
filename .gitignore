@@ -1,6 +1,15 @@
+# Ignore IDE specific files
+.idea/
+.vscode/
+.DS_Store
+
 # Ignore compiled Python files
 __pycache__/
+*.pyc
 *.py[cod]
+
+# Ignore test cache
+.pytest_cache/
 
 # Ignore local virtualenv
 .env*
