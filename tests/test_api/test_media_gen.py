@@ -1,24 +1,36 @@
+from unittest.mock import patch, MagicMock
+
 def test_generate_media_success(client):
     """
     Test case for successful media generation
     """
-    payload = {
-        "prompt": "A panda playing guitar on a beach",
-        "width": 768,
-        "height": 512,
-        "model": "realistic-v1",
-    }
+    with patch('app.api.media_gen.MediaGenerationJob.create') as mock_create, \
+         patch('app.api.media_gen.generate_media_task.delay') as mock_task:
+        
+        mock_job = MagicMock()
+        mock_job.id = "test-job-id"
+        mock_job.prompt = "A panda playing guitar on a beach"
+        mock_job.model = "realistic-v1"
+        mock_job.width = 768
+        mock_job.height = 512
+        mock_create.return_value = mock_job
+        
+        payload = {
+            "prompt": "A panda playing guitar on a beach",
+            "width": 768,
+            "height": 512,
+            "model": "realistic-v1",
+        }
 
-    # Send POST request to /generate
-    response = client.post("/generate", json=payload)
+        response = client.post("/generate", json=payload)
+        data = response.json()
 
-    assert response.status_code == 200
-
-    # Assert the response body has the expected fields
-    data = response.json()
-    assert "job_id" in data
-    assert "message" in data
-    assert data["message"] == "Job queued successfully"
+        assert mock_create.called
+        assert mock_task.called
+        assert response.status_code == 200
+        assert "job_id" in data
+        assert "message" in data
+        assert data["message"] == "Job queued successfully"
 
 
 def test_generate_media_missing_prompt(client):
