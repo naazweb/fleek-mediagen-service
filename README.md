@@ -152,7 +152,7 @@ The API will be available at `http://localhost:8000`
 Run the test suite with:
 
 ```bash
-python manage.py pytest
+python manage.py test
 ```
 
 For development, you can enable mock mode for Replicate API by setting `MOCK_REPLICATE=True` in your `.env` file.
